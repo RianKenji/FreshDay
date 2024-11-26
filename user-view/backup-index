@@ -1,0 +1,248 @@
+<head>
+  <style>
+/* TESTIMONIALS SECTION */
+
+
+:root {
+    --main-color: #ff5e5e;
+    --border: 2px solid #444;
+}
+
+.review {
+    padding: 50px 20px;
+    margin: 0 50px;
+    text-align: center;
+}
+
+.review .heading {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: #fff;
+}
+
+.review .heading span {
+    color: var(--main-color);
+}
+
+.review .box-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+    gap: 1.5rem;
+}
+
+.review .box-container .box {
+    background-color: #333;
+    border: var(--border);
+    border-radius: 8px;
+    text-align: center;
+    padding: 3rem 2rem;
+    transition: transform 0.3s ease;
+}
+
+.review .box-container .box:hover {
+    transform: scale(1.05);
+}
+
+.review .box-container .box .quote {
+    font-size: 2.5rem; /* Adjust size as needed */
+    color: var(--main-color); /* Use your main color or adjust */
+}
+
+.review .box-container .box p {
+    font-size: 1.5rem;
+    line-height: 1.8;
+    color: #ccc;
+    padding: 2rem 0;
+}
+
+.review .box-container .box .user {
+    width: 7rem;
+    height: 7rem;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+}
+
+.review .box-container .box h3 {
+    padding: 1rem 0;
+    font-size: 2rem;
+    color: #fff;
+}
+
+.review .box-container .box .stars {
+    color: var(--main-color);
+}
+
+.review .box-container .box .stars i {
+    font-size: 1.5rem;
+    margin: 0 2px;
+}
+  </style>
+</head>
+<?php include 'header.php'?>
+  <!-- Hero Section start -->
+  <section class="hero" id="home">
+    <div class="mask-container">
+      <main class="content">
+        <h1>Mari Nikmati Secangkir <span>Kopi</span></h1>
+        <p>▫️Fresh ur day with freshday!▫️ #FDyourFavouriteDrink</p>
+        <a href="#products" class="cta">Beli Sekarang</a>
+      </main>
+    </div>
+  </section>
+  <!-- Hero Section end -->
+
+  <!-- About Section start -->
+  <section id="about" class="about">
+    <h2><span>Tentang</span> Kami</h2>
+
+    <div class="row">
+      <div class="about-img">
+        <img src="../img/tentang-kami.jpg" alt="Tentang Kami">
+      </div>
+      <div class="content">
+        <h3>Kenapa memilih kopi kami?</h3>
+        <p style="text-align:justify;">Freshday merupakan bisnis yang dimulai dari rasa cinta kita terhadap minuman kopi instan
+dalam kemasan botol atau kaleng yang sudah kehilangan esensi dari cita rasa kopi itu
+sendiri, dari situlah awal mula kami memulai bisnis ini. Freshday sudah berjalan aktif selama
+2 bulan dan untuk kedepannya tentu kami akan lebih menawarkan berbagai varian rasa dan
+hal – hal menakjubkan lainnya seperti varian rasa yang belum pernah ada dan minuman
+yang limited edition</p>
+      </div>
+    </div>
+  </section>
+  <!-- About Section end -->
+
+<!-- Products Section start -->
+<section class="products" id="products">
+  <h2><span>Produk Unggulan</span> Kami</h2>
+  <p style="text-align:center;">Temukan berbagai varian kopi yang dapat memanjakan selera Anda.</p>
+  <div class="row">
+    <?php
+    // Query untuk mengambil data produk dari database
+    $sql = "SELECT * FROM menu";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+      // Looping melalui setiap produk
+      while ($row = $result->fetch_assoc()) {
+        // Cek apakah gambar produk ada
+        $imagePath = "../img/" . $row['gambar'];
+        if (!file_exists($imagePath)) {
+          $imagePath = "../img/default.jpg"; // Gambar default jika tidak ada
+        }
+        ?>
+        <!-- Form to add product to cart -->
+      <form class="product-card" data-menuid="<?php echo $row['menuID']; ?>" data-namamenu="<?php echo $row['namaMenu']; ?>" data-harga="<?php echo $row['harga']; ?>" data-gambar="<?php echo $imagePath; ?>">
+          <div class="product-icons">
+            <!-- Submit button to add product to cart -->
+            <button type="button" class="add-to-cart"><i data-feather="shopping-cart"></i></button>
+            <!-- Tombol Detail Produk -->
+            <a href="#" class="item-detail-button">
+               <i data-feather="eye"></i>
+            </a>
+          </div>
+          <div class="product-image">
+            <img src="<?php echo $imagePath; ?>" alt="<?php echo $row['namaMenu']; ?>">
+          </div>
+          <div class="product-content">
+            <h3><?php echo $row['namaMenu']; ?></h3>
+            <div class="product-price">IDR <?php echo number_format($row['harga'], 0, ',', '.'); ?></div>
+          </div>
+          <input type="hidden" name="jumlah" value="1">
+        </form>
+        <?php
+      }
+    } else {
+      echo "<p>Tidak ada produk yang tersedia.</p>";
+    }
+    ?>
+  </div>
+</section>
+<!-- Products Section end -->
+
+<!-- TESTIMONIALS SECTION -->
+<section class="review" id="review">
+    <h1 class="heading"><span>Testimo</span>nials</h1>
+    <div class="box-container">
+        <div class="box">
+        <i class="fas fa-quote-left quote"></i>
+        <p>
+                Kelas Pagi Lebih Semangat Ditemenin FreshDay
+            </p>
+            <img src="../img/testi/testi1.jpg" alt="" class="user">
+            <h3>Verrend</h3>
+            <div class="stars">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+            </div>
+        </div>
+        <div class="box">
+        <i class="fas fa-quote-left quote"></i>
+            <p>
+                Buat Aku yang gasuka kopi, ini ada rasa kesukaan aku yang cocok banget itu matcha latte with honey 😊
+            </p>
+            <img src="assets/images/pic-2.png" alt="" class="user">
+            <h3>Hanly</h3>
+            <div class="stars">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+            </div>
+        </div>
+        <div class="box">
+        <i class="fas fa-quote-left quote"></i>
+            <p>
+                Skuyyy yang doyan minum kopi beli disini!!!!
+            </p>
+            <img src="assets/images/pic-3.png" alt="" class="user">
+            <h3>Jeann</h3>
+            <div class="stars">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+  <!-- Contact Section start -->
+  <section id="contact" class="contact">
+    <h2><span>Kontak</span> Kami</h2>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis, provident.
+    </p>
+
+    <div class="row">
+      <form action="">
+        <div class="input-group">
+          <i data-feather="user"></i>
+          <input type="text" placeholder="nama">
+        </div>
+        <div class="input-group">
+          <i data-feather="mail"></i>
+          <input type="text" placeholder="email">
+        </div>
+        <div class="input-group">
+          <i data-feather="phone"></i>
+          <input type="text" placeholder="no hp">
+        </div>
+        <div class="input-group-wide">
+        <textarea id="testimonial" name="testimonial" rows="5" placeholder="Reviews" required></textarea>
+      </div>
+
+        <button type="submit" class="btn">kirim pesan</button>
+      </form>
+
+    </div>
+  </section>
+  <!-- Contact Section end -->
+<?php include 'footer.php'?>
+ 

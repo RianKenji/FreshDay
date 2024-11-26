@@ -1,0 +1,7 @@
+Array
+(
+    [promoID] => 
+    [namaPromo] => 
+    [hargaPromo] => 
+    [isPromo] => 1
+)

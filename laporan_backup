@@ -1,0 +1,84 @@
+<?php
+// Include database configuration
+include "config.php";
+require('fpdf186/fpdf.php');
+
+// Retrieve filter dates from POST
+$startDate = isset($_POST['start_date']) ? $_POST['start_date'] : '';
+$endDate = isset($_POST['end_date']) ? $_POST['end_date'] : '';
+
+// Build query with date filters
+$query = "SELECT * FROM pembayaran";
+$conditions = [];
+
+if (!empty($startDate)) {
+    $startDate = $conn->real_escape_string($startDate);
+    $conditions[] = "tanggalPembayaran >= '$startDate'";
+}
+
+if (!empty($endDate)) {
+    $endDate = $conn->real_escape_string($endDate);
+    $conditions[] = "tanggalPembayaran <= '$endDate'";
+}
+
+if (count($conditions) > 0) {
+    $query .= " WHERE " . implode(" AND ", $conditions);
+}
+
+// Execute the query
+$result = mysqli_query($conn, $query);
+
+// Initialize FPDF and set up PDF
+$pdf = new FPDF();
+$pdf->AddPage();
+$pdf->SetFont('Arial', 'B', 16);
+$pdf->Cell(0, 10, 'Laporan Penjualan', 0, 1, 'C');
+$pdf->SetFont('Arial', '', 12);
+$pdf->Cell(0, 10, "Periode: $startDate - $endDate", 0, 1, 'C');
+
+// Table headers
+$pdf->SetFont('Arial', 'B', 10);
+$pdf->Cell(10, 10, 'No', 1);
+$pdf->Cell(30, 10, 'Pembayaran ID', 1);
+$pdf->Cell(30, 10, 'Pesanan ID', 1);
+$pdf->Cell(40, 10, 'Metode Pembayaran', 1);
+$pdf->Cell(40, 10, 'Tanggal Pembayaran', 1);
+$pdf->Cell(40, 10, 'Jumlah Pembayaran', 1);
+$pdf->Ln();
+
+// Initialize row counter and total payment
+$no = 1;
+$totalPembayaran = 0;
+
+// Check if there are results
+if ($result->num_rows > 0) {
+    // Table rows
+    $pdf->SetFont('Arial', '', 10);
+    while ($row = $result->fetch_assoc()) {
+        $pdf->Cell(10, 10, $no, 1);
+        $pdf->Cell(30, 10, $row['pembayaranID'], 1);
+        $pdf->Cell(30, 10, $row['pesananID'], 1);
+        $pdf->Cell(40, 10, $row['metodePembayaran'], 1);
+        $pdf->Cell(40, 10, $row['tanggalPembayaran'], 1);
+        $pdf->Cell(40, 10, 'Rp ' . number_format($row['jumlahPembayaran'], 2, ',', '.'), 1);
+        $pdf->Ln();
+
+        $totalPembayaran += $row['jumlahPembayaran']; // Calculate total
+        $no++;
+    }
+
+    // Display total payment at the end
+    $pdf->SetFont('Arial', 'B', 10);
+    $pdf->Cell(150, 10, 'Total Pendapatan:', 1, 0, 'R');
+    $pdf->Cell(40, 10, 'Rp ' . number_format($totalPembayaran, 2, ',', '.'), 1, 1, 'R');
+} else {
+    $pdf->Cell(0, 10, 'No data available for the selected dates.', 1, 1, 'C');
+}
+
+// Close database connection
+$conn->close();
+
+// Output PDF to browser
+$pdf->Output('D', 'laporan_penjualan.pdf');
+exit();
+?>
